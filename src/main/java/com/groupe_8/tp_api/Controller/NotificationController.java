@@ -1,20 +1,30 @@
 package com.groupe_8.tp_api.Controller;
 
-import com.groupe_8.tp_api.Model.Budget;
+
 import com.groupe_8.tp_api.Model.Notification;
 import com.groupe_8.tp_api.Service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/notification")
+@CrossOrigin
+@RequestMapping("notification")
 public class NotificationController {
 
+    @Autowired
+    NotificationService notificationService;
+
+    @GetMapping("/list/{idUser}")
+    public ResponseEntity<List<Notification>> listNotif(@PathVariable long idUser){
+        return new ResponseEntity<>(notificationService.getAllNotif(idUser), HttpStatus.OK);
+    }
     /* @Autowired
     private NotificationService notificationService;
 

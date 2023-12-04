@@ -30,26 +30,6 @@ public class NotificationService {
     @Value("${spring.mail.username}")
     String sender;
 
-    /*public String sendNotification(Notification notification){
-
-        Utilisateur utilisateur = notification.getUtilisateur();
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-        try {
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(utilisateur.getEmail());
-            mailMessage.setText(notification.getTexte());
-            mailMessage.setSubject("Alerte Budgetaire");
-
-            javaMailSender.send(mailMessage);
-
-            notification.setDate(LocalDate.now());
-
-            return "succes";
-        }catch (Exception e){
-            return e.getMessage();
-        }
-    }*/
 
     public void sendNotification(Budget budget){
         Notification notification = new Notification();
@@ -85,6 +65,16 @@ public class NotificationService {
         }catch (Exception e){
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+    public List<Notification> getAllNotif(long idUser){
+        List<Notification>  notifListe = notificationRepository.findByUtilisateurIdUtilisateur(idUser);
+
+        if(notifListe.isEmpty()){
+            throw new EntityNotFoundException("Aucun  trouvé");
+        }
+
+        return notifListe;
     }
     public void sendNotificationDepenses(Depenses depenses){
         System.out.println("EMAIL debut");
@@ -126,46 +116,7 @@ public class NotificationService {
             throw new BadRequestException(e.getMessage());
         }
     }
-  /*  public void sendNotificationDepenses(Depenses depenses){
-        System.out.println("EMAIL debut");
-        Notification notification = new Notification();
-        Utilisateur utilisateur = depenses.getUtilisateur();
-        System.out.println("USER "+utilisateur.getEmail());
-        Categorie categorie = depenses.getBudget().getCategorie();
-        System.out.println("cat "+categorie.getTitre());
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        String msg;
 
-        if (depenses.getBudget().getMontantAlerte() == 0){
-            msg = "Bonjour, Mr/Mme "+utilisateur.getNom()+"\n votre Budget de "+categorie.getTitre()+" du " +
-                    depenses.getBudget().getDateDebut()+" au "+depenses.getBudget().getDateFin()+" à atteint son seuil qui est "+depenses.getBudget().getMontantAlerte();
-        }else {
-            msg = "Bonjour, Mr/Mme "+utilisateur.getNom()+"\nvotre Budget de "+categorie.getTitre()+" du " +
-                    depenses.getBudget().getDateDebut()+" au "+depenses.getBudget().getDateFin()+" à atteint/depasseé son montant d'alerte qui est "+
-                    depenses.getBudget().getMontantAlerte()+", votre montant restant du budget est "+depenses.getBudget().getMontantRestant();
-        }
-
-        notification.setTexte(msg);
-
-        try {
-            System.out.println("EMAIL service ");
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(utilisateur.getEmail());
-            mailMessage.setText(notification.getTexte());
-            mailMessage.setSubject("Alerte Budgetaire");
-
-            javaMailSender.send(mailMessage);
-
-            notification.setUtilisateur(utilisateur);
-            notification.setBudget(depenses.getBudget());
-            notification.setDate(LocalDate.now());
-
-            notificationRepository.save(notification);
-            System.out.println("EMAIL envoie service");
-        }catch (Exception e){
-            throw new BadRequestException(e.getMessage());
-        }
-    }*/
     public void sendNotifTransf (Budget nextBudget,Budget budget){
         Notification notification = new Notification();
         Utilisateur utilisateur = budget.getUtilisateur();
